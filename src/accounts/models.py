@@ -63,3 +63,32 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = []  # Email & Password are required by default.
 
     objects = UserManager()
+
+    def __str__(self):
+        return self.email
+
+    def get_full_name(self):
+        if self.full_name:
+            return self.full_name
+        return self.email
+
+    def get_short_name(self):
+        return self.email
+
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):
+        return True
+
+    @property
+    def is_staff(self):
+        if self.is_admin:
+            return True
+        return self.staff
+
+    @property
+    def is_admin(self):
+        return self.admin
+    
