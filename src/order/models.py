@@ -7,7 +7,7 @@ from django.db.models.signals import post_save, pre_save
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 
-from address.models import Address
+from addresses.models import Address
 from billing.models import BillingProfile
 from carts.models import Cart
 from eccomerce.utils import unique_order_id_generator
