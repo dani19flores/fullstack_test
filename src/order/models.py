@@ -10,7 +10,7 @@ from django.utils import timezone
 from addresses.models import Address
 from billing.models import BillingProfile
 from carts.models import Cart
-from eccomerce.utils import unique_order_id_generator
+#from eccomerce.utils import unique_order_id_generator
 from products.models import products
 
 ORDER_STATUS_CHOICES = (

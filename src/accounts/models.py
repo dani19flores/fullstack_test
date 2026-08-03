@@ -89,4 +89,13 @@ class User(AbstractBaseUser):
     @property
     def is_admin(self):
         return self.admin
+
+class GuestEmail(models.Model):
+    email = models.EmailField()
+    active = models.BooleanField(default=True)
+    update = models.DateTimeField(auto_now=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email
     
