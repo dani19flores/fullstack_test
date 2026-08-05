@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "billing.apps.BillingConfig",
     "carts.apps.CartsConfig",
     "products.apps.ProductsConfig",
-    "orders.apps.OrdersConfig",
+    "order.apps.OrderConfig",
     "pages.apps.PagesConfig",
     "ventas.apps.VentasConfig",
     "django.contrib.admin",

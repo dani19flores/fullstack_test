@@ -11,7 +11,6 @@ from addresses.models import Address
 from billing.models import BillingProfile
 from carts.models import Cart
 #from eccomerce.utils import unique_order_id_generator
-from products.models import products
 
 ORDER_STATUS_CHOICES = (
     ('created', 'Created'),
@@ -69,8 +68,8 @@ class Order(models.Model):
     status = models.CharField(max_length=120, default='created', choices=ORDER_STATUS_CHOICES)
     shipping_total = models.DecimalField(default=5.99, max_digits=100, decimal_places=2)
     active = models.BooleanField(default=True)
-    updated = models.BooleanField(auto_now=True)
-    timestamp = models.BooleanField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return super().order_id
