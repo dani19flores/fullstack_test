@@ -6,4 +6,53 @@
             <h1>Sales Analytics</h1>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col">
+            <p>Recientes</p>
+            <ol>
+                {% for order in recent_orders %}
+                    <li>
+                        {{ order.order_id}}
+                        {{order.total}}
+                        {{order.updated}}
+                    </li>
+                {% empty %}
+                    <li>No hay ordenes recientes</li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>Enviados</p>
+            <ol>
+                {% for order in shipped_orders %}
+                    <li>
+                        {{ order.order_id}}
+                        {{order.total}}
+                        {{order.updated}}
+                    </li>
+                {% empty %}
+                    <li>No hay ordenes enviados</li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>Pagados</p>
+            <ol>
+                {% for order in paid_orders %}
+                    <li>
+                        {{ order.order_id}}
+                        {{order.total}}
+                        {{order.updated}}
+                    </li>
+                {% empty %}
+                    <li>No hay ordenes pagados</li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
 {% endblock %}
