@@ -2,7 +2,7 @@ import math
 import datetime
 from django.conf import settings
 from django.db import models
-from django.db.models import Count, Sum, Q
+from django.db.models import Avg, Count, Sum, Q
 from django.db.models.signals import post_save, pre_save
 from django.urls import reverse
 from django.utils import timezone
@@ -25,6 +25,25 @@ class OrderManagerQuerySet(models.query.QuerySet):
     def recent(self):
         return self.order_by('-updated', '-timestamp')
 
+    def get_sales_breakdown(self):
+        recent = self.recent().not_refunded()
+        recent_data = recent.total_data()
+        recent_cart_data = recent.cart_data()
+        shipped = recent.by_status(status='shipped')
+        shipped_data = shipped.totals_data()
+        paid = recent.by_status(status='paid')
+        paid_data = paid.total_data()
+        data = {
+            "recent":recent,
+            "recent_data":recent_data,
+            "recent_cart_data":recent_cart_data,
+            "shipped":shipped,
+            "shipped_data":shipped_data,
+            "paid":paid,
+            "paid_data":paid_data,
+        }
+        return data
+
     def by_status(self, status='shipped'):
         return self.filter(status=status)
 
@@ -33,6 +52,23 @@ class OrderManagerQuerySet(models.query.QuerySet):
 
     def not_created(self):
         return self.exclude(status='created')
+
+    def by_request(self, start_date, end_date=None):
+        if end_date is None:
+            return self.filter(updated__gte=start_date)
+        return self.filter(updated__gte=start_date).filter(updated__lte=end_date)
+
+    def total_data(self):
+        return self.aggregate(Sum('total'), Avg('total'))
+
+    def by_week_data(self, week_ago=7, number_of_weeks=2):
+        if number_of_weeks > week_ago:
+            number_of_weeks = week_ago
+        days_ago_start = week_ago * 7
+        days_ago_end = days_ago_start - (number_of_weeks * 7)
+        start_date = timezone.now() - datetime.timedelta(days=days_ago_start)
+        end_date = timezone.now() - datetime.timedelta(days=days_ago_end)
+        return self.by_range(start_date, end_date)
 
 class OrderManager(models.Manager):
     def get_queryset(self):
