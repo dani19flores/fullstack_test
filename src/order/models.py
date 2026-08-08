@@ -68,7 +68,7 @@ class OrderManagerQuerySet(models.query.QuerySet):
         days_ago_end = days_ago_start - (number_of_weeks * 7)
         start_date = timezone.now() - datetime.timedelta(days=days_ago_start)
         end_date = timezone.now() - datetime.timedelta(days=days_ago_end)
-        return self.by_range(start_date, end_date)
+        return self.by_request(start_date, end_date)
 
 class OrderManager(models.Manager):
     def get_queryset(self):
@@ -103,12 +103,13 @@ class Order(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     status = models.CharField(max_length=120, default='created', choices=ORDER_STATUS_CHOICES)
     shipping_total = models.DecimalField(default=5.99, max_digits=100, decimal_places=2)
+    total = models.DecimalField(default=0.00, max_digits=100, decimal_places=2)
     active = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return super().order_id
+        return self.order_id or str(self.pk)
 
     objects = OrderManager()
 
