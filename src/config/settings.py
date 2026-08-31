@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "billing.apps.BillingConfig",
     "carts.apps.CartsConfig",
     "products.apps.ProductsConfig",
+    "forms_test.apps.FormsTestConfig",
     "order.apps.OrderConfig",
     "pages.apps.PagesConfig",
     "ventas.apps.VentasConfig",
