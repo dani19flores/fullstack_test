@@ -7,6 +7,8 @@ def home(request):
         #"bolean": True,
         #"integer": 10,
         #"email": "example@example.com"
+        #"option": "option1"
+        #"radio_option": "radio1"
     }
     form = TestForm(request.POST or None, initial=initial_data)
     if form.is_valid():
