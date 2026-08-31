@@ -1,8 +1,9 @@
 from django import forms
 
 class TestForm(forms.Form):
-    some_text = forms.CharField(label='Search', max_length=100)
-    bolean = forms.BooleanField(label='Check this box', required=False)
+    date = forms.DateField(label='Enter a date', widget=forms.SelectDateWidget())
+    some_text = forms.CharField(label='Ingresa un texto:', max_length=100, widget=forms.Textarea(attrs={'rows': 3, 'cols': 40}))
+    bolean = forms.BooleanField(label='Check this box', required=False, initial=True)
     integer = forms.IntegerField(label='Enter a number', min_value=0, max_value=100)
     email = forms.EmailField(label='Enter your email')
 
