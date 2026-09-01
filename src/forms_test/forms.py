@@ -1,4 +1,5 @@
 from django import forms
+from .models import Product
 
 OPTION_CHOICES = [
     ('option1', 'Option 1'),
@@ -33,3 +34,41 @@ class TestForm(forms.Form):
         if len(some_text) < 10:
             raise forms.ValidationError('El texto debe tener más de 10 caracteres.')
         return some_text
+
+class ProductModelForm(forms.ModelForm):
+
+    label = {
+        "title": "Título del producto",
+        "slug": "Slug del producto",
+        "price": "Precio del producto",
+    }
+
+    class Meta:
+        model = Product
+        fields = [
+            #'user',
+            'title',
+            'slug',
+            'price',
+        ]
+        exclude = []
+
+    def clean_title(self, *args, **kwargs):
+        title = self.cleaned_data.get('title')
+        if len(title) < 10:
+            raise forms.ValidationError('El título debe tener más de 10 caracteres.')
+        return title
+    
+    def clean_slug(self, *args, **kwargs):
+            slug = self.cleaned_data.get('slug')
+            if len(slug) <= 10:
+                raise forms.ValidationError('El slug debe tener más de 10 caracteres.')
+            if " " in slug:
+                raise forms.ValidationError('El slug no puede contener espacios.')
+            return slug
+
+    def clean_price(self, *args, **kwargs):
+        price = self.cleaned_data.get('price')
+        if price < 0:
+            raise forms.ValidationError('El precio no puede ser negativo.')
+        return price
