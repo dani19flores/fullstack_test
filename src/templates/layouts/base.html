@@ -8,21 +8,30 @@
         {% include 'base/css.html' %}
         {% block base_head %} {% endblock %}
      </head>
-     <body>
+     <body class="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
         {% include 'base/navbar.html' with brand_name="eCommerce" %}
-        <div class="Container">
+        <main class="w-full max-w-5xl mx-auto px-4 py-8 flex-1">
             {% if messages %}
-                <div class="alert alert-success message">
+                <div class="mb-6 space-y-2">
                     {% for message in messages %}
-                        <span {% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Error: {% endif %}
-                            {{ message }} <br>
-                        </span>
+                        <div class="rounded-md border px-4 py-3 text-sm
+                            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                                border-red-200 bg-red-50 text-red-700
+                            {% elif message.tags == 'success' %}
+                                border-green-200 bg-green-50 text-green-700
+                            {% elif message.tags == 'warning' %}
+                                border-amber-200 bg-amber-50 text-amber-800
+                            {% else %}
+                                border-blue-200 bg-blue-50 text-blue-700
+                            {% endif %}">
+                            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}<strong>Error:</strong>{% endif %}
+                            {{ message }}
+                        </div>
                     {% endfor %}
                 </div>
             {% endif %}
             {% block content %} {% endblock %}
-        </div>
+        </main>
 
         {% include 'base/js.html' %}
         {% block javascript %}

@@ -1,3 +1,7 @@
-<nav class="navbar">
-    <a class="navbar-brand" href="{% url 'home' %}">{{ brand_name }}</a>
+<nav class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="w-full max-w-5xl mx-auto px-4 py-3 flex items-center">
+        <a class="text-lg font-semibold text-gray-900 tracking-tight hover:text-gray-700" href="{% url 'home' %}">
+            {{ brand_name }}
+        </a>
+    </div>
 </nav>
