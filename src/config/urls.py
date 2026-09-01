@@ -26,6 +26,7 @@ urlpatterns = [
     path("ventas/", include("ventas.urls")),
     path("admin/", admin.site.urls),
     path("forms/", include("forms_test.urls")),
+    path("test_templates/", include("test_templates.urls")),
 ]
 if not settings.TESTING:
     urlpatterns = [
