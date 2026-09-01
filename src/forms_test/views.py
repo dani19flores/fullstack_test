@@ -1,16 +1,26 @@
 from django.shortcuts import render
-from .forms import TestForm
+from django.forms import modelformset_factory
+
+from .forms import ProductModelForm
+from .models import Product
+
 
 def home(request):
-    initial_data = {
-        "some_text":"Texto inicial",
-        #"bolean": True,
-        #"integer": 10,
-        #"email": "example@example.com"
-        #"option": "option1"
-        #"radio_option": "radio1"
+    ProductModelFormSet = modelformset_factory(Product, form=ProductModelForm)
+    formset = ProductModelFormSet(request.POST or None, queryset=Product.objects.all())
+
+    print("formset.data")
+    print(formset.data)
+
+    print("formset.errors")
+    print(formset.errors)
+
+    if formset.is_valid():
+        print("ModelFormSet is valid")
+        formset.save()
+
+    context = {
+        'formset': formset
     }
-    form = TestForm(request.POST or None, initial=initial_data)
-    if form.is_valid():
-        print(form.cleaned_data)
-    return render(request, 'forms.html', {'form': form})
+    
+    return render(request, 'formset_view.html', context)
