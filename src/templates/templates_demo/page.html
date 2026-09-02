@@ -1,0 +1,78 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Django Templates{% endblock %}
+
+{% block content %}
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Django Templates</h1>
+        <p class="text-sm text-gray-500">Filtros, ciclos for, herencia e include con variables.</p>
+    </div>
+
+    {# ---------- 1. Filtros ---------- #}
+    <div>
+        <h2 class="mt-8 mb-1 text-sm font-semibold text-gray-700">Filtros</h2>
+        <p class="mb-2 text-xs text-gray-500">headline = "{{ headline }}"</p>
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm divide-y divide-gray-100">
+            <div class="flex items-center justify-between px-5 py-4">
+                <span class="text-sm font-medium text-gray-500">headline|title</span>
+                <span class="text-sm font-semibold text-gray-900">{{ headline|title }}</span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-4">
+                <span class="text-sm font-medium text-gray-500">headline|upper</span>
+                <span class="text-sm font-semibold text-gray-900">{{ headline|upper }}</span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-4">
+                <span class="text-sm font-medium text-gray-500">headline|truncatewords:3</span>
+                <span class="text-sm font-semibold text-gray-900">{{ headline|truncatewords:3 }}</span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-4">
+                <span class="text-sm font-medium text-gray-500">headline|length</span>
+                <span class="text-sm font-semibold text-gray-900">{{ headline|length }}</span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-4">
+                <span class="text-sm font-medium text-gray-500">total_price|floatformat:2</span>
+                <span class="text-sm font-semibold text-gray-900">${{ total_price|floatformat:2 }}</span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-4">
+                <span class="text-sm font-medium text-gray-500">nickname|default:"Sin apodo"</span>
+                <span class="text-sm font-semibold text-gray-900">{{ nickname|default:"Sin apodo" }}</span>
+            </div>
+        </div>
+    </div>
+
+    {# ---------- 2. For + divisibleby ---------- #}
+    <div>
+        <h2 class="mt-8 mb-1 text-sm font-semibold text-gray-700">Ciclo for + forloop.counter|divisibleby</h2>
+        <p class="mb-2 text-xs text-gray-500">
+            Los renglones cuyo número de iteración es divisible entre {{ divisible_by }} se marcan como "Par".
+        </p>
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm divide-y divide-gray-100">
+            {% for product in products %}
+                <div class="flex items-center justify-between px-5 py-4 {% if forloop.counter|divisibleby:divisible_by %}bg-gray-50{% endif %}">
+                    <span class="text-sm font-medium text-gray-500">
+                        {{ forloop.counter }}. {{ product.name }}
+                        {% if forloop.counter|divisibleby:divisible_by %}
+                            <span class="ml-2 inline-block rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-700">Par</span>
+                        {% else %}
+                            <span class="ml-2 inline-block rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">Impar</span>
+                        {% endif %}
+                    </span>
+                    <span class="text-sm font-semibold text-gray-900">${{ product.price|floatformat:2 }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {# ---------- 3. Include con variables ---------- #}
+    <div>
+        <h2 class="mt-8 mb-1 text-sm font-semibold text-gray-700">Include con variables</h2>
+        <p class="mb-2 text-xs text-gray-500">
+            El mismo template _stat_card.html se reutiliza 3 veces, cada una con datos distintos pasados por "with".
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {% include "templates_demo/_stat_card.html" with label="Productos" value=total_products accent="blue" %}
+            {% include "templates_demo/_stat_card.html" with label="Precio total" value=total_price|floatformat:2 accent="green" %}
+            {% include "templates_demo/_stat_card.html" with label="Precio promedio" value=average_price|floatformat:2 accent="amber" %}
+        </div>
+    </div>
+{% endblock %}

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "products.apps.ProductsConfig",
     "forms_test.apps.FormsTestConfig",
     "test_templates.apps.TestTemplatesConfig",
+    "templates_demo.apps.TemplatesDemoConfig",
     "order.apps.OrderConfig",
     "pages.apps.PagesConfig",
     "ventas.apps.VentasConfig",
