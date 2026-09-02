@@ -1,0 +1,7 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ view_title }}{% endblock %}
+
+{% block content %}
+    {% include "test_templates/object-detail.html" with object_title=view_title price=my_number created_at=today %}
+{% endblock content %}

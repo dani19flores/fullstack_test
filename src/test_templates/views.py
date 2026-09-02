@@ -20,3 +20,12 @@ def test_view(request):
     messages.add_message(request, messages.SUCCESS, "This is a success message.")
     return render(request, template, context)
 
+
+def detail_view(request):
+    context = {
+        "view_title": "Test View",
+        "my_number": 42,
+        "today": datetime.now(),
+    }
+    return render(request, "test_templates/detail-view.html", context)
+
