@@ -28,6 +28,7 @@ urlpatterns = [
     path("forms/", include("forms_test.urls")),
     path("test_templates/", include("test_templates.urls")),
     path("templates-demo/", include("templates_demo.urls")),
+    path("api/v1/", include("api.urls")),
 ]
 if not settings.TESTING:
     urlpatterns = [
