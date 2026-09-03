@@ -25,6 +25,7 @@ late 2014.
 - [Files of interest](#files-of-interest)
   - [`.env`](#env)
   - [`run`](#run)
+- [API](#api)
 - [Running a script to automate renaming the project](#running-a-script-to-automate-renaming-the-project)
 - [Updating dependencies](#updating-dependencies)
 - [See a way to improve something?](#see-a-way-to-improve-something)
@@ -243,6 +244,64 @@ functions as you want. This file's purpose is to make your experience better!
 *If you get tired of typing `./run` you can always create a shell alias with
 `alias run=./run` in your `~/.bash_aliases` or equivalent file. Then you'll be
 able to run `run` instead of `./run`.*
+
+## 📡 API
+
+A small REST API built with [Django REST Framework](https://www.django-rest-framework.org/)
+lives under `src/api/`. Every endpoint is namespaced under `/api/v1/`.
+
+### `GET/POST/PUT/DELETE /api/v1/`
+
+Handled by `api.views.ProductAPIView`. Right now each method is a stub that
+returns a fixed acknowledgement message (no request parameters are read yet,
+and no database changes are made) — useful for confirming that routing and
+DRF are wired up correctly before adding real create/update/delete logic.
+
+**Parameters:** none.
+
+**Example request:**
+
+```bash
+curl http://localhost:8000/api/v1/
+```
+
+**Example response** (`200 OK`, same shape for GET/POST/PUT/DELETE, only the
+`detail` text changes to match the HTTP method used):
+
+```json
+{
+    "detail": "Estás en método GET de la vista ProductAPIView"
+}
+```
+
+### `Product` model / serializer
+
+`api.models.Product` is the model this API is meant to expose:
+
+| Field   | Type                                   | Notes                              |
+|---------|-----------------------------------------|-------------------------------------|
+| `id`    | integer                                 | primary key, auto-assigned          |
+| `user`  | integer (FK id) or `null`               | owner of the product, optional      |
+| `title` | string, max 120 chars                   | required                            |
+| `slug`  | string                                  | required, must be unique            |
+| `price` | decimal (up to 10 digits, 2 decimals)   | required                            |
+
+`api.serializers.ProductSerializer` exposes exactly those 5 fields. It isn't
+wired into `ProductAPIView` yet — once the view queries `Product.objects.all()`
+and returns `ProductSerializer(products, many=True).data`, a `GET` request
+will instead return a JSON array like:
+
+```json
+[
+    {
+        "id": 1,
+        "user": null,
+        "title": "Keyboard",
+        "slug": "keyboard",
+        "price": "45.50"
+    }
+]
+```
 
 ## ✨ Running a script to automate renaming the project
 
