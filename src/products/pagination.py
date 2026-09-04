@@ -1,4 +1,4 @@
-from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination, CursorPagination
 
 class ProductPagination(PageNumberPagination):
     #page_size = 10
@@ -12,3 +12,8 @@ class ProductLDPagionation(LimitOffsetPagination):
     max_limit = 7
     limit_query_param = 'records'
     offset_query_param = 'start'
+
+class ProductCPagination(CursorPagination):
+    page_size = 4
+    cursor_query_param = 'cur'
+    ordering = 'created_at'
