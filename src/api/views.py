@@ -1,8 +1,17 @@
-from rest_framework import views
+from rest_framework import viewsets, views
 from rest_framework.response import Response
 
 from .models import Product
 from .serializers import ProductSerializer
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet completo sobre Product: expone create, list, retrieve,
+    update, partial_update y destroy usando la base de datos real.
+    """
+    queryset = Product.objects.all().order_by('id')
+    serializer_class = ProductSerializer
 
 
 class ProductAPIView(views.APIView):
