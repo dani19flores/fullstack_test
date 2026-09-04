@@ -34,6 +34,7 @@ ALLOWED_HOSTS = list(map(str.strip, allowed_hosts.split(",")))
 
 # Application definitions
 INSTALLED_APPS = [
+    "rest_examples.apps.RestExamplesConfig",
     "rest_framework",
     "api.apps.ApiConfig",
     "accounts.apps.AccountsConfig",
