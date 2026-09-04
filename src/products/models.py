@@ -18,6 +18,17 @@ class Product(models.Model):
     active = models.BooleanField(default=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     is_digital = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.title
+    def get_absolute_url(self):
+        return f"/products/{self.slug}/"
+
+    def get_edit_url(self):
+        return f"/products/{self.slug}/edit/"
+
+    def get_delete_url(self):
+        return f"/products/{self.slug}/delete/"
+
+class DigitalProduct(Product):
+    class meta:
+        proxy = True
