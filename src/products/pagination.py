@@ -16,4 +16,4 @@ class ProductLDPagionation(LimitOffsetPagination):
 class ProductCPagination(CursorPagination):
     page_size = 4
     cursor_query_param = 'cur'
-    ordering = 'created_at'
+    ordering = ('created_at', 'id')
