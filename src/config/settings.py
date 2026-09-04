@@ -57,6 +57,15 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
+# Django REST Framework
+# https://www.django-rest-framework.org/api-guide/renderers/
+REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ],
+}
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
