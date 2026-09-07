@@ -303,7 +303,54 @@ will instead return a JSON array like:
 ]
 ```
 
-## ✨ Running a script to automate renaming the project
+### Pagination
+
+`src/products/` exposes the same `Product` list through three different
+pagination styles, one endpoint each, so you can compare how they behave.
+Each one has its query parameters renamed on purpose (see
+`products.pagination`) to show that they don't have to keep DRF's defaults.
+
+| Style | Endpoint | Query params | Notes |
+|---|---|---|---|
+| Page number | `GET /api/products/` | `p` (page, default `1`; use `p=end` for the last page), `size` (page size, max `5`) | `size` is optional — without it, the endpoint returns everything unpaginated. |
+| Limit/offset | `GET /api/products/limit-offset/` | `records` (limit, default `5`, max `7`), `start` (offset, default `0`) | `records` + `start` work like SQL's `LIMIT`/`OFFSET`. |
+| Cursor | `GET /api/products/cursor/` | `cur` (opaque cursor) | Always follow the `next`/`previous` links from the response — don't build `cur` by hand, it's a base64-encoded position, not a page number. Ordered by `id`. |
+
+**Example: page number pagination**
+
+```bash
+curl "http://localhost:8000/api/products/?p=2&size=5"
+```
+
+```json
+{
+    "count": 33,
+    "next": "http://localhost:8000/api/products/?p=3&size=5",
+    "previous": "http://localhost:8000/api/products/?size=5",
+    "results": [
+        {"id": 6, "title": "Producto 3", "slug": "producto-3", "price": "13.00"}
+    ]
+}
+```
+
+**Example: limit/offset pagination**
+
+```bash
+curl "http://localhost:8000/api/products/limit-offset/?records=3&start=3"
+```
+
+**Example: cursor pagination** — get the first page, then follow `next`:
+
+```bash
+curl "http://localhost:8000/api/products/cursor/"
+# -> copy the "next" URL from the response and curl that instead of guessing ?cur=...
+```
+
+All three read from the same `Product` model (`products.models.Product`) and
+share `products.serializers.ProductSerializer`, which exposes `id`, `title`,
+`slug` and `price`.
+
+## Running a script to automate renaming the project
 
 The app is named `hello` right now but chances are your app will be a different
 name. Since the app is already created we'll need to do a find / replace on a
@@ -431,12 +478,12 @@ a Docker registry but if you decide to build your Docker images directly on
 your server you could run `docker compose build` as part of your deploy
 pipeline which is similar to how it would work in CI.
 
-## 🤝 See a way to improve something?
+## See a way to improve something?
 
 If you see anything that could be improved please open an issue or start a PR.
 Any help is much appreciated!
 
-## 🌎 Additional resources
+## Additional resources
 
 Now that you have your app ready to go, it's time to build something cool! If
 you want to learn more about Docker, Django and deploying a Django app here's a
@@ -465,7 +512,7 @@ you want to get notified when it launches with a discount and potentially get
 free videos while the course is being developed then [sign up here to get
 notified](https://nickjanetakis.com/courses/deploy-to-production).
 
-## 👀 About the author
+## About the author
 
 - Nick Janetakis | <https://nickjanetakis.com> | [@nickjanetakis](https://twitter.com/nickjanetakis)
 
