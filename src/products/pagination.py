@@ -5,7 +5,7 @@ class ProductPagination(PageNumberPagination):
     page_query_param = 'p' #page number query parameter
     page_size_query_param = 'size'
     max_page_size = 5
-    last_page_strings = "end" #last page query parameter
+    last_page_strings = ('end',) #last page query parameter
 
 class ProductLDPagionation(LimitOffsetPagination):
     default_limit = 5
