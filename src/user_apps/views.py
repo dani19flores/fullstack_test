@@ -3,7 +3,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .serializers import RegistrationSerializer
+from .serializers import RegistrationSerializer, UserProfileSerializer
 
 
 class RegisterAPIView(generics.CreateAPIView):
@@ -40,3 +40,16 @@ class LogoutAPIView(views.APIView):
     def post(self, request, *args, **kwargs):
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class ProfileAPIView(generics.RetrieveAPIView):
+    """
+    Perfil del usuario autenticado. No recibe pk por la URL: siempre
+    devuelve request.user, así cada quien solo puede ver su propio
+    perfil, nunca el de otro usuario.
+    """
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user

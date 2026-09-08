@@ -33,3 +33,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
             email=validated_data.get('email', ''),
             password=validated_data['password'],
         )
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    """Datos de perfil del usuario autenticado (solo lectura)."""
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'date_joined']
+        read_only_fields = fields
