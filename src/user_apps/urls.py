@@ -2,8 +2,10 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from .forms import StyledAuthenticationForm
+from .views import RegisterAPIView
 
 urlpatterns = [
+    path('register/', RegisterAPIView.as_view(), name='register'),
     path(
         'login/',
         auth_views.LoginView.as_view(
