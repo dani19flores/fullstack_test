@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Product
 from .serializers import ProductSerializer
@@ -24,3 +25,4 @@ class ProductCursorListView(generics.ListAPIView):
     queryset = Product.objects.all().order_by('id')
     serializer_class = ProductSerializer
     pagination_class = ProductCPagination
+    permiission_classes = [IsAuthenticated]

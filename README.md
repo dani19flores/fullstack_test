@@ -26,6 +26,8 @@ late 2014.
   - [`.env`](#env)
   - [`run`](#run)
 - [API](#api)
+  - [Pagination](#pagination)
+  - [Authentication types](#authentication-types)
 - [Running a script to automate renaming the project](#running-a-script-to-automate-renaming-the-project)
 - [Updating dependencies](#updating-dependencies)
 - [See a way to improve something?](#see-a-way-to-improve-something)
@@ -349,6 +351,38 @@ curl "http://localhost:8000/api/products/cursor/"
 All three read from the same `Product` model (`products.models.Product`) and
 share `products.serializers.ProductSerializer`, which exposes `id`, `title`,
 `slug` and `price`.
+
+### Authentication types
+
+This app's endpoints don't require authentication yet (see
+[`ProductAPIView`](#getpostputdelete-apiv1) and the pagination endpoints
+above — anyone can call them). This section is a reference for the different
+ways [Django REST Framework](https://www.django-rest-framework.org/api-guide/authentication/)
+can identify *who* is making a request, so it's easier to pick the right one
+when the time comes to lock these endpoints down.
+
+Authentication only answers "who is this?" — it's separate from
+*permissions* (DRF's `permission_classes`), which answer "are they allowed to
+do this?". You need both: DRF's default `IsAuthenticated`/`AllowAny`
+permission classes only make sense once a request has been authenticated (or
+explicitly hasn't been, for anonymous requests).
+
+| Type | How it identifies the user | Where the credential travels | Good for | Watch out for |
+|---|---|---|---|---|
+| **Basic** | `Authorization: Basic base64(user:password)` header, checked on *every* request | Every single request, in cleartext (base64 is encoding, not encryption) | Quick scripts, server-to-server calls, local dev | Must be used over HTTPS only — otherwise the password is basically sent in the clear; no logout, no expiry |
+| **Session** | Django's regular session cookie (the same one the browser-based site already uses) | A cookie, set once at login | Same-origin requests from the site's own frontend (e.g. the DRF browsable API forms we've been testing) | Needs CSRF protection for unsafe methods (POST/PUT/PATCH/DELETE); awkward for a separate mobile app or a frontend on another domain |
+| **Token** (`rest_framework.authtoken`) | A single, permanent, opaque string per user (`Authorization: Token <key>`) | Every request, in a header | Simple mobile apps / scripts that just need "log in once, reuse forever" | One token per user (no separate token per device by default); doesn't expire on its own — revoking means deleting the row in the DB; sent on every request like Basic, so still needs HTTPS |
+| **RemoteUser** | Trusts a username set by something in front of Django (e.g. an `Nginx`/Apache module, or an SSO proxy) in a request header/`REMOTE_USER` env var | Set by the web server / proxy before Django ever sees the request | Intranet apps sitting behind a corporate SSO proxy that already handled the actual login | Django blindly trusts whatever's in that header — only safe if you fully control the layer in front of Django and nothing else can reach it directly |
+| **JWT** (e.g. [`djangorestframework-simplejwt`](https://django-rest-framework-simplejwt.readthedocs.io/)) | A signed, self-contained token (`Authorization: Bearer <jwt>`) that encodes the user + an expiry, verified without a DB lookup | Every request, in a header; a short-lived *access* token plus a longer-lived *refresh* token | SPAs and mobile apps that need stateless auth across multiple services | Can't be revoked before it expires (it's just a signature check) unless you add a blocklist; must keep the secret key safe; access tokens should be short-lived, refreshed via the refresh token |
+| **OAuth 2.0** (e.g. [`django-oauth-toolkit`](https://django-oauth-toolkit.readthedocs.io/)) | A third party (Google, GitHub, your own auth server) issues an access token after the user grants specific *scopes* | Every request, in a header (`Bearer` token, often itself a JWT) | "Log in with X", or letting a third-party app act on a user's behalf with limited permissions | The heaviest to set up correctly (authorization code flow, redirect URIs, refresh tokens, scopes); overkill if you just need "is this user logged in?" |
+
+**Rule of thumb for this project:** Session auth is already working implicitly
+(that's what let the browsable API's `POST` form in the
+[pagination section](#pagination) create a product while logged into
+`/admin/`). If/when these endpoints need to be called from outside the
+browser, Token or JWT are the two most common starting points — Token for
+something simple and internal, JWT if there's a separate frontend/mobile app
+that needs short-lived, revocable-by-expiry credentials.
 
 ## Running a script to automate renaming the project
 
