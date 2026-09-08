@@ -1,6 +1,6 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, views
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .serializers import RegistrationSerializer
@@ -9,8 +9,8 @@ from .serializers import RegistrationSerializer
 class RegisterAPIView(generics.CreateAPIView):
     """
     Registro de usuarios: valida los datos con RegistrationSerializer,
-    crea el User y, en el mismo paso, le genera su token de autenticación
-    para que pueda usar la API de inmediato sin pedirlo aparte.
+    crea el User (el token se genera solo vía la señal post_save en
+    models.py) y devuelve ambos en la respuesta.
     """
     serializer_class = RegistrationSerializer
     permission_classes = [AllowAny]
@@ -31,3 +31,12 @@ class RegisterAPIView(generics.CreateAPIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+class LogoutAPIView(views.APIView):
+    """Cierra la sesión de API: borra el token del usuario autenticado."""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)
