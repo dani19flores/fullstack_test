@@ -19,10 +19,18 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 urlpatterns = [
     path("up/", include("up.urls")),
     path("api/token/", obtain_auth_token, name="api-token-auth"),
+    path("api/token/jwt/", TokenObtainPairView.as_view(), name="jwt-obtain"),
+    path("api/token/jwt/refresh/", TokenRefreshView.as_view(), name="jwt-refresh"),
+    path("api/token/jwt/verify/", TokenVerifyView.as_view(), name="jwt-verify"),
     path("", include("pages.urls")),
     path("analytics/", include("analytics.urls")),
     path("ventas/", include("ventas.urls")),
