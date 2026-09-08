@@ -34,8 +34,10 @@ ALLOWED_HOSTS = list(map(str.strip, allowed_hosts.split(",")))
 
 # Application definitions
 INSTALLED_APPS = [
+    "user_apps.apps.UserAppsConfig",
     "rest_examples.apps.RestExamplesConfig",
     "rest_framework",
+    "rest_framework.authtoken",
     "api.apps.ApiConfig",
     "accounts.apps.AccountsConfig",
     "addresses.apps.AddressesConfig",
@@ -65,7 +67,9 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.BrowsableAPIRenderer",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.BasicAuthentication"
+        #"rest_framework.authentication.BasicAuthentication"
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated"
@@ -152,6 +156,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Sessions
 # https://docs.djangoproject.com/en/6.0/ref/settings/#sessions
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+
+# Auth
+# https://docs.djangoproject.com/en/6.0/ref/settings/#login-url
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "home"
 
 # Redis
 REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")

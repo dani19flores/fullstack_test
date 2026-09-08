@@ -18,9 +18,11 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
+from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path("up/", include("up.urls")),
+    path("api/token/", obtain_auth_token, name="api-token-auth"),
     path("", include("pages.urls")),
     path("analytics/", include("analytics.urls")),
     path("ventas/", include("ventas.urls")),
@@ -31,6 +33,7 @@ urlpatterns = [
     path("api/v1/", include("api.urls")),
     path("api/v2/", include("rest_examples.urls")),
     path("api/products/", include("products.urls")),
+    path("accounts/", include("user_apps.urls")),
 ]
 if not settings.TESTING:
     urlpatterns = [

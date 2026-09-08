@@ -1,0 +1,42 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Iniciar sesión{% endblock %}
+
+{% block content %}
+    <div class="min-h-[70vh] flex items-center justify-center">
+        <div class="w-full max-w-sm">
+            <div class="mb-6 text-center">
+                <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-900">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-6 w-6 text-white">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900">Iniciar sesión</h1>
+                <p class="text-sm text-gray-500">Entra con tu usuario y contraseña</p>
+            </div>
+
+            <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+                <form method="post">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    {% for field in form %}
+                        <div class="mb-4">
+                            {{ field }}
+                            {% if field.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ field.errors|striptags }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    <button type="submit" class="w-full rounded-md bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-700">
+                        Entrar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
