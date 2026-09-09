@@ -98,6 +98,21 @@ services:
           memory: "${DOCKER_WORKER_MEMORY:-0}"
     profiles: ["worker"]
 
+  selenium:
+    deploy:
+      resources:
+        limits:
+          cpus: "${DOCKER_SELENIUM_CPUS:-0}"
+          memory: "${DOCKER_SELENIUM_MEMORY:-0}"
+    image: "selenium/standalone-chrome:latest"
+    ports:
+      - "${DOCKER_SELENIUM_PORT_FORWARD:-127.0.0.1:4444}:4444"
+      - "${DOCKER_SELENIUM_VNC_PORT_FORWARD:-127.0.0.1:7900}:7900"
+    profiles: ["selenium"]
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    shm_size: "2gb"
+    stop_grace_period: "3s"
+
   js:
     <<: *default-assets
     command: "../run yarn:build:js"
