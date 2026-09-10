@@ -42,6 +42,10 @@ urlpatterns = [
     path("api/v2/", include("rest_examples.urls")),
     path("api/products/", include("products.urls")),
     path("accounts/", include("user_apps.urls")),
+    path("billing/", include("billing.urls")),
+    path("addresses/", include("addresses.urls")),
+    path("order/", include("order.urls")),
+    path("newsletter/", include("accounts.urls")),
 ]
 if not settings.TESTING:
     urlpatterns = [
