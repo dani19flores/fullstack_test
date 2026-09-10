@@ -18,7 +18,8 @@ dependencies = [
   "djangorestframework",
   "djangorestframework-simplejwt",
   "beautifulsoup4",
-  "selenium"
+  "selenium",
+  "django-cors-headers"
 ]
 
 [tool.ruff]
