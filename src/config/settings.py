@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "rest_examples.apps.RestExamplesConfig",
     "rest_framework",
     "rest_framework.authtoken",
+    "corsheaders",
     "api.apps.ApiConfig",
     "accounts.apps.AccountsConfig",
     "addresses.apps.AddressesConfig",
@@ -80,12 +81,23 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+# django-cors-headers: le permite al frontend en Vite llamar a esta API
+# durante desarrollo. CorsMiddleware debe ir antes que CommonMiddleware
+# para poder inyectar los headers en la respuesta. Usamos un regex (en vez
+# de fijar el puerto 5173) porque Vite salta a otro puerto libre cuando el
+# 5173 ya está ocupado.
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^http://localhost:\d+$",
+    r"^http://127\.0\.0\.1:\d+$",
 ]
 
 if not TESTING:
