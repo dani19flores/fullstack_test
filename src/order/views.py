@@ -10,7 +10,7 @@ from carts.models import Cart, CartItem
 from products.models import Product
 
 from .models import Order
-from .serializers import OrderSerializer
+from .serializers import OrderSerializer, OrderStatusUpdateSerializer
 
 SHIPPING_TOTAL = Decimal("5.99")
 
@@ -63,3 +63,33 @@ class OrderListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         return Order.objects.filter(billing_profile__user=self.request.user)
+
+
+class OrderDetailAPIView(views.APIView):
+    """
+    Detalle/actualización de una orden propia. PATCH/PUT solo aceptan
+    status; si el nuevo status es 'canceled' o 'refunded' la orden
+    también se marca active=False, para que el conteo de "activas" no
+    dependa de que el cliente mande ese campo aparte.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, request, pk):
+        return get_object_or_404(Order, pk=pk, billing_profile__user=request.user)
+
+    def get(self, request, pk, *args, **kwargs):
+        order = self.get_object(request, pk)
+        return Response(OrderSerializer(order).data)
+
+    def patch(self, request, pk, *args, **kwargs):
+        order = self.get_object(request, pk)
+        serializer = OrderStatusUpdateSerializer(order, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+        if order.status in ('canceled', 'refunded'):
+            order.active = False
+            order.save(update_fields=['active'])
+        return Response(OrderSerializer(order).data)
+
+    def put(self, request, pk, *args, **kwargs):
+        return self.patch(request, pk, *args, **kwargs)

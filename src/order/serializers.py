@@ -15,7 +15,15 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'order_id', 'status', 'shipping_total', 'total', 'timestamp', 'items']
+        fields = ['id', 'order_id', 'status', 'active', 'shipping_total', 'total', 'timestamp', 'items']
 
     def get_items(self, obj):
         return OrderItemSerializer(obj.cart.items.select_related('product'), many=True).data
+
+
+class OrderStatusUpdateSerializer(serializers.ModelSerializer):
+    """Solo permite cambiar el status: active se recalcula en la vista."""
+
+    class Meta:
+        model = Order
+        fields = ['status']
