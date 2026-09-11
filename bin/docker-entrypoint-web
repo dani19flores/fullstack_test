@@ -6,4 +6,11 @@ set -e
 # into your volume persisted public directory.
 cp -r /public_collected /app
 
+# Render sets RENDER=true on every service. There's no separate release step
+# on the free plan, so we run migrations here on every boot instead (safe:
+# migrate is idempotent).
+if [ "${RENDER:-}" = "true" ]; then
+  (cd /app/src && python3 manage.py migrate --no-input)
+fi
+
 exec "$@"

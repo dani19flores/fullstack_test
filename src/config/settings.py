@@ -32,6 +32,12 @@ TESTING = "test" in sys.argv
 allowed_hosts = os.getenv("ALLOWED_HOSTS", ".localhost,127.0.0.1,[::1]")
 ALLOWED_HOSTS = list(map(str.strip, allowed_hosts.split(",")))
 
+# Render sets this automatically for every service; add it so the deployed
+# instance answers on its own *.onrender.com host without hardcoding it.
+render_hostname = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+if render_hostname:
+    ALLOWED_HOSTS.append(render_hostname)
+
 # Application definitions
 INSTALLED_APPS = [
     "user_apps.apps.UserAppsConfig",
@@ -98,6 +104,13 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^http://localhost:\d+$",
     r"^http://127\.0\.0\.1:\d+$",
+]
+
+# Origins for deployed frontends (e.g. GitHub Pages), comma-separated, exact
+# match required by django-cors-headers for CORS_ALLOWED_ORIGINS.
+cors_allowed_origins = os.getenv("CORS_ALLOWED_ORIGINS", "")
+CORS_ALLOWED_ORIGINS = [
+    origin.strip() for origin in cors_allowed_origins.split(",") if origin.strip()
 ]
 
 if not TESTING:
@@ -176,16 +189,27 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "home"
 
 # Redis
+# Optional in deployments without a Redis add-on (e.g. Render free tier):
+# set USE_REDIS=false there to fall back to local-memory caching. Nothing in
+# this codebase actually queues Celery tasks yet, so this is safe.
 REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
+USE_REDIS = bool(strtobool(os.getenv("USE_REDIS", "true")))
 
 # Caching
 # https://docs.djangoproject.com/en/6.0/topics/cache/
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": REDIS_URL,
+if USE_REDIS:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        }
+    }
 
 # Celery
 # https://docs.celeryproject.org/en/stable/userguide/configuration.html
