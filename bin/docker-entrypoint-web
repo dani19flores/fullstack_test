@@ -11,6 +11,15 @@ cp -r /public_collected /app
 # migrate is idempotent).
 if [ "${RENDER:-}" = "true" ]; then
   (cd /app/src && python3 manage.py migrate --no-input)
+
+  # The free plan has no Shell access either, so bootstrap an admin from env
+  # vars instead of `createsuperuser` interactively. `--noinput` fails (via
+  # sys.exit) if the username already exists, which `set -e` would treat as
+  # a boot failure on every later restart, so we swallow that specific case.
+  if [ -n "${DJANGO_SUPERUSER_USERNAME:-}" ] && [ -n "${DJANGO_SUPERUSER_PASSWORD:-}" ]; then
+    (cd /app/src && DJANGO_SUPERUSER_EMAIL="${DJANGO_SUPERUSER_EMAIL:-admin@example.com}" \
+      python3 manage.py createsuperuser --noinput) || true
+  fi
 fi
 
 exec "$@"
