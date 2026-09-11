@@ -11,6 +11,7 @@ cp -r /public_collected /app
 # migrate is idempotent).
 if [ "${RENDER:-}" = "true" ]; then
   (cd /app/src && python3 manage.py migrate --no-input)
+  (cd /app/src && python3 manage.py seed_products)
 
   # The free plan has no Shell access either, so bootstrap an admin from env
   # vars instead of `createsuperuser` interactively. `--noinput` fails (via
